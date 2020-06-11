@@ -106,7 +106,9 @@ class absorber_extractor():
         #open up the dataset and ray files
         if use_foggie_load:
             box_trackfile = '/mnt/home/boydbre1/data/track_files/halo_track_200kpc_nref10' #might want to make more flexible
-            self.ds, reg_foggie = foggie_load(self.ds_filename, box_trackfile, disk_relative=True)
+            hcv_file='/mnt/home/boydbre1/Repo/foggie/foggie/halo_infos/008508/nref11c_nref9f/halo_c_v'
+            self.ds, reg_foggie = foggie_load(self.ds_filename, box_trackfile,
+                                              halo_c_v_name=hcv_file, disk_relative=True)
         else:
             self.ds = yt.load(self.ds_filename)
         self.load_ray(self.ray_filename)

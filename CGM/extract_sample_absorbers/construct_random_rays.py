@@ -114,7 +114,10 @@ def random_rays(dsname, center,
     # get start/end points for light rays
     if use_foggie_load:
         box_trackfile = '/mnt/home/boydbre1/data/track_files/halo_track_200kpc_nref10' #might want to make more flexible
-        ds, reg_foggie = foggie_load(dsname, box_trackfile, disk_relative=True)
+        hcv_file='/mnt/home/boydbre1/Repo/foggie/foggie/halo_infos/008508/nref11c_nref9f/halo_c_v'
+
+        ds, reg_foggie = foggie_load(dsname, box_trackfile,
+                                     halo_c_v_name=hcv_file, disk_relative=True)
     else:
         ds = yt.load(dsname)
     ds = yt.load(dsname)
