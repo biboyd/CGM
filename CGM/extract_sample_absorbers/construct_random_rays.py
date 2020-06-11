@@ -3,14 +3,17 @@ import trident
 import numpy as np
 
 from mpi4py import MPI
-from sys import argv
+from sys import argv, path
 from os import makedirs
 from scipy.spatial.transform import Rotation
 import matplotlib.pyplot as plt
 
 from CGM.general_utils.construct_rays import construct_rays
 from CGM.general_utils.center_finder import find_center
-from CGM.general_utils.filter_definitions import radius_function, ion_p
+from CGM.general_utils.filter_definitions import radius_function, ion_p, default_ice_fields
+
+path.insert(0,"/mnt/home/boydbre1/Repo/foggie")
+from foggie.utils.foggie_load import foggie_load
 
 def random_sightlines(dsname, center, num_sightlines, max_impact_param, min_impact_param=0, length=200, seed=None):
     """
@@ -83,7 +86,8 @@ def random_rays(dsname, center,
                 length=200,
                 bulk_velocity=None,
                 line_list=['H I', 'C IV', 'O VI'],
-                other_fields=['density', 'metallicity', 'temperature', ('gas', 'radius'), 'radial_velocity', ('index', 'grid_indices')],
+                other_fields=None,
+                use_foggie_load=True,
                 out_dir='./',
                 parallel=True,
                 seed=None):
@@ -108,6 +112,11 @@ def random_rays(dsname, center,
     """
 
     # get start/end points for light rays
+    if use_foggie_load:
+        box_trackfile = '/mnt/home/boydbre1/data/track_files/halo_track_200kpc_nref10' #might want to make more flexible
+        ds, reg_foggie = foggie_load(dsname, box_trackfile, disk_relative=True)
+    else:
+        ds = yt.load(dsname)
     ds = yt.load(dsname)
 
     if bulk_velocity is not None:
@@ -116,6 +125,8 @@ def random_rays(dsname, center,
     #add ion fields to dataset if not already there
     trident.add_ion_fields(ds, ions=line_list, ftype='gas')
 
+    if other_fields is None:
+        other_fields = default_ice_fields
     for line in line_list:
         ion_frac = ('gas', f"{ion_p(line)}_ion_fraction")
         other_fields.append(ion_frac)

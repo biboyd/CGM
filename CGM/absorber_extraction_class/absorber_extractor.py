@@ -16,6 +16,9 @@ from astropy.table import QTable
 
 from CGM.general_utils.filter_definitions import ion_p_num, default_ice_fields, default_units_dict, default_cloud_dict
 
+path.insert(0,"/mnt/home/boydbre1/Repo/foggie")
+from foggie.utils.foggie_load import foggie_load
+
 class absorber_extractor():
     """
     Extracts absorbers from a trident lightray for a given ion species. Does This
@@ -82,6 +85,7 @@ class absorber_extractor():
 
     def __init__(self, ds_filename, ray_filename,
                 ion_name='H I', cut_region_filters=None,
+                use_foggie_load=True,
                 wavelength_center=None, velocity_res = 10,
                 redshift = 0, bulk_velocity=None,
                 spectacle_defaults=None, spectacle_res=None,
@@ -100,7 +104,11 @@ class absorber_extractor():
         self.ion_list = [ion_name]
 
         #open up the dataset and ray files
-        self.ds = yt.load(self.ds_filename)
+        if use_foggie_load:
+            box_trackfile = '/mnt/home/boydbre1/data/track_files/halo_track_200kpc_nref10' #might want to make more flexible
+            self.ds, reg_foggie = foggie_load(self.ds_filename, box_trackfile, disk_relative=True)
+        else:
+            self.ds = yt.load(self.ds_filename)
         self.load_ray(self.ray_filename)
 
         # set bulk velocity
@@ -342,7 +350,7 @@ class absorber_extractor():
 
             #calculate velocity dispersion
             #weighted std dev. weight=dl*ion_density
-            
+
             # set single cell absorber to zero velocity variance
             if end-start == 1:
                 vel_variance=0.
