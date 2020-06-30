@@ -675,7 +675,7 @@ class absorber_extractor():
                         #change start of next interval
                         start_b = avg_v[i][2]
                     #check if this is the last two intervals to check
-                    elif i == len(avg_v) -2:
+                    if i == len(avg_v) -2:
                         new_intervals.append((start_b, curr_e))
 
 
