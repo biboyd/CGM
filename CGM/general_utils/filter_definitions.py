@@ -107,15 +107,16 @@ def ion_p_num(ion_name):
     return outname
 
 #ice extraction defaults
-default_ice_fields = ['x', 'y', 'z', 'radius', 'radius_corrected',
+default_ice_fields = ['x', 'y', 'z', 
+                      'radius', 'radius_corrected',
                       'density', 'metallicity', 'temperature',
                       'radial_velocity', 'radial_velocity_corrected',
                       'tangential_velocity_corrected',
                       'vx_corrected', 'vy_corrected', 'vz_corrected']
 default_units_dict=dict(velocity_los='km/s',
-                       x='kpc',
-                       y='kpc',
-                       z='kpc',
+                       x='code_length',
+                       y='code_length',
+                       z='code_length',
                        radius='kpc',
                        radius_corrected='kpc',
                        density='g/cm**3',

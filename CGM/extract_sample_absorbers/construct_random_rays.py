@@ -120,7 +120,6 @@ def random_rays(dsname, center,
                                      halo_c_v_name=hcv_file, disk_relative=True)
     else:
         ds = yt.load(dsname)
-    ds = yt.load(dsname)
 
     if bulk_velocity is not None:
         bulk_velocity = ds.arr(bulk_velocity, 'km/s')
