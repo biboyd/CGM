@@ -49,6 +49,7 @@ def main(filename, ray_dir, i_name, out_dir, frac, cut_filters, velocity_res=10)
     #set up plotter settings
     mp_kwargs = dict(ds_filename=filename, ion_name=i_name,
     				    absorber_fields=line_list,
+                        use_foggie_load=False,
                                     center_gal = center,
                                     north_vector = nvec,
                                     redshift=rshift[0],

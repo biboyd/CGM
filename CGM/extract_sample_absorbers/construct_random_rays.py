@@ -129,6 +129,12 @@ def random_rays(dsname, center,
 
     if other_fields is None:
         other_fields = default_ice_fields
+
+        #remove x, y, and z if present
+        for coord in ('x', 'y', 'z'):
+            if coord in other_fields:
+                other_fields.remove(coord)
+
     for line in line_list:
         ion_frac = ('gas', f"{ion_p(line)}_ion_fraction")
         other_fields.append(ion_frac)

@@ -107,6 +107,7 @@ class absorber_plotter(absorber_extractor):
                 ray_filename,
                 ion_name='H I',
                 cut_region_filters=None,
+                use_foggie_load=True,
                 slice_field=None,
                 absorber_fields=[],
                 north_vector=[0, 0, 1],

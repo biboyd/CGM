@@ -4,6 +4,8 @@ import numpy as np
 from os import makedirs
 
 from CGM.general_utils.filter_definitions import hist_range_dict, default_units_dict
+from CGM.general_utils.center_finder import find_center
+
 homedir="/mnt/home/boydbre1/"
 scratch="/mnt/gs18/scratch/users/boydbre1/"
 
@@ -19,23 +21,24 @@ def main(args):
     cut = args.cut
     cmap = args.cmap
 
-    yt.enable_parallelism()
+    #yt.enable_parallelism()
     ion_u = "_".join(ion.split())
     cut_u = "_".join(cut.split())
 
-    main_dir=f"{homedir}/data/absorber_data/{ref}_refinement/max_impact200/ion_{ion_u}/"
+    main_dir=f"{homedir}/data/absorber_data/{ref}_refinement/max_impact{max_impact}/ion_{ion_u}/"
 
     ds_file=f"{scratch}/cosmological/{ref}_refinement/{dsName}/{dsName}"
     points_file=f"{main_dir}/{cut_u}/{dsName}_positions.npy"
     ds = yt.load(ds_file)
 
+    center, n, bv, r = find_center(ds_file)
     #setup file paths
     out_dir = f"{main_dir}/plots/{cut_u}/phase_plots"
     out_file = f"{out_dir}/{xfld}_x_{yfld}_x_{zfld}_{ds.current_redshift:.2f}.png"
 
     makedirs(out_dir, exist_ok=True)
     #create data object of cells
-    cell_abs = get_absorber_cells(points_file, ds_file)
+    cell_abs = get_absorber_cells(points_file, ds_file, center=center, bv=bv)
 
     #create and save phase plot 
     range_dict=hist_range_dict[ion]
@@ -54,7 +57,7 @@ def get_absorber_cells(coordinates_file, ds_file, center=None, bv=None):
     absorber_cells = ds.union(points, ds=ds)
     
     if center is not None:
-        absorber_cells.set_field_parameter('radius', center)
+        absorber_cells.set_field_parameter('center', center)
 
     if bv is not None:
         absorber_cells.set_field_parameter('bulk velocity', bv)
@@ -77,30 +80,19 @@ def make_phase_plot(absorber_cells, xvar, yvar, zvar, range_dict={}, cmap='virid
 
     lims={}
     if xvar in range_dict.keys():
-        if xvar in default_units_dict:
-            lims[xvar] = ((range_dict[xvar][0], default_units_dict[xvar]), (range_dict[xvar][1], default_units_dict[xvar]))
-        else:
-            lims[xvar] = range_dict[xvar]
+        lims[xvar] = range_dict[xvar]
     
     if yvar in range_dict.keys():
-        if yvar in default_units_dict:
-            lims[yvar] = (range_dict[yvar], default_units_dict[yvar])
-            lims[yvar] = ((range_dict[yvar][0], default_units_dict[yvar]), (range_dict[yvar][1], default_units_dict[yvar]))
-        else:
-            lims[yvar] = range_dict[yvar]
+        lims[yvar] = range_dict[yvar]
 
     if zvar in range_dict.keys():
-        if zvar in default_units_dict:
-            lims[zvar] = ((range_dict[zvar][0], default_units_dict[zvar]), (range_dict[zvar][1], default_units_dict[zvar]))
-
-        else:
-            lims[zvar] = range_dict[zvar]
+        lims[zvar] = range_dict[zvar]
     if lims == {}:
         lims=None
 
     unit_dict={}
     #setting units 
-    """if xvar in default_units_dict:
+    if xvar in default_units_dict:
         unit_dict[xvar] = default_units_dict[xvar]
 
     if yvar in default_units_dict:
@@ -108,14 +100,12 @@ def make_phase_plot(absorber_cells, xvar, yvar, zvar, range_dict={}, cmap='virid
 
     if zvar in default_units_dict:
         unit_dict[zvar] = default_units_dict[zvar]
-    """
+    
     if unit_dict == {}:
         unit_dict=None
-    
-    print(xlog, ylog)
+
     profile = yt.create_profile(absorber_cells, [xvar, yvar], zvar, logs={xvar:xlog, yvar:ylog}, units=unit_dict, extrema=lims)
     phase = yt.PhasePlot.from_profile(profile)
-
 
     phase.set_cmap(zvar, cmap)
     phase.save(outf)
