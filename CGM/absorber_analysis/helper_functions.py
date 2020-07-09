@@ -37,25 +37,25 @@ def load_files(ds, dataDir, cuts=["cgm"], count_absorbers=False):
 
 
     # load tables
-    table_list=[]
+    df_list=[]
     cut_name_list = []
     for c in cuts:
         c_u = "_".join(c.split(" "))
-        c_file = f"{dataDir}/{c_u}/{ds}_absorbers.h5"
+        c_file = f"{dataDir}/{c_u}/{ds}_absorbers.csv"
 
 
         try:
-            c_table = Table.read(c_file)
+            c_df = pd.read_csv(c_file, index_col=0)
 
             # get readable name for cuts
             if count_absorbers:
-                n_absorbers = len(c_table)
+                n_absorbers = len(c_df)
                 cut_name = f"{cut_alias_dict[c_u]}:  {n_absorbers}"
             else:
                 cut_name = cut_alias_dict[c_u]
 
             c_table['cuts'] = cut_name
-            table_list.append(c_table)
+            df_list.append(c_df)
         except OSError:
             print(f"couldn't load {c_file}")
 
@@ -67,16 +67,9 @@ def load_files(ds, dataDir, cuts=["cgm"], count_absorbers=False):
 
         cut_name_list.append(cut_name)
 
-    if len(table_list) == 0:
-        raise FileNotFoundError("Could not find any h5 files to load")
+    if len(df_list) == 0:
+        raise FileNotFoundError("Could not find any files to load")
     else:
         #combine tables
-        final_table = vstack(table_list)
-
-    #try to convert to pandas
-    try:
-        df = final_table.to_pandas()
-        return df, cut_name_list
-    except ImportError:
-        print("Pandas not installed. returning py table instead")
-        return final_table, cut_name_list
+        final_df = pd.concat(table_list, ignore_index=True)
+        return final_df, cut_name_list
