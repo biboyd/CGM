@@ -1,6 +1,9 @@
 # Code Related to analyzing the CGM by creating Synthetic Spectra
 using yt, trident and spectacle projects
 
+**NOTE**: Absorber Extraction and Catalog creation should now be done using the [SALSA package](https://github.com/biboyd/salsa)
+
+
 Begin using by running `pip install -e ./`
 # Directory layout
 ## CGM
@@ -10,11 +13,18 @@ holds code to construct a python package that includes `absorber_extractor` and 
 Scripts for creating plots of different absorption properties. Particularly for exploring as well as comparing different type of absorbers ie hot/cold or inflow/outflow.
 
 ### CGM/absorber_extraction_class
+**NOTE**: This Code is deprecated. Use the [SALSA package](https://github.com/biboyd/salsa) to do any absorber extraction
 This contains the code for the `absorber_extractor` which can extract absorbers from a trident lightray using either spectacle to fit spectra or the "ICE Method" which uses an algorithm to find the absorbers directly from the number density along the lightray. 
+
+### CGM/catalog 
+Code using SALSA to generate catalog of absorbers for a given Ion and Snap shot
+
 ### CGM/comparison_code 
 A script comparing the results of different algorithms for extracting absorbers directly from lightray
 
 ### CGM/extract_sample_absorbers
+**NOTE**: This Code is deprecated. Use the [SALSA package](https://github.com/biboyd/salsa) to do any absorber extraction. Lightray generation can also be found in SALSA package and is more up to date there.
+
 Scripts to construct lightrays and then extract absorbers from those lightrays. One creates a uniform "scan" of the galaxy which can then be constructed into a movie. The other creates a random distribution of lightrays which then can be used to find a distribution of absorbers that can be compared to observational studies. Cuts can be made to the dataset before extracting absorbers which allows to study different type of absorbers.
 
 ### CGM/general_utils
