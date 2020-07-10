@@ -26,8 +26,8 @@ ionLabel=${ionName% *}_${ionName#* }
 #make spaces in cuts to underscore
 cut_u=${cuts// /_}
 
-# check if just CGM filter
-outFile="$mainDir/output_$frac/ion_$ionLabel/$cut_u/absorber_catalog.csv"
+outDir=~/data/absorber_data/$dataDir/max_impact${maxImpact}/ion_$ionLabel/$cut_u/
+outFile=$outDir/${dsName}_absorbers.csv
 
 if ! [ -d $outDir ];
 then
