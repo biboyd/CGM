@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from CGM.general_utils.filter_definitions import ovi_range_dict, axis_labels_dict
 # set indirectory
 max_imp=200
 data_dir=f"/mnt/home/boydbre1/data/absorber_data/cool_refinement//max_impact{max_imp}/ion_O_VI/"
@@ -32,7 +33,7 @@ fig_temp = many_rvel_v_r('temperature', 'Reds')
 fig_metal = many_rvel_v_r('metallicity', 'Greens')
 fig_density = many_rvel_v_r('density', 'Blues')
 
-#save scatter plots 
+#save scatter plots
 outdir="/mnt/home/boydbre1/data/absorber_data/cool_refinement/max_impact200/ion_O_VI/plots/cgm/scatter_plots"
 makedirs(outdir, exist_ok=True)
 fig_temp.savefig(f"{outdir}/radvel_v_rad_temperature.png", dpi=300)
