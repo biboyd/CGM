@@ -13,10 +13,12 @@ from mpl_toolkits.axes_grid1 import AxesGrid
 from numpy.linalg import norm
 import astropy.units  as u
 
-path.insert(0, "/mnt/home/boydbre1/Repo")
 from CGM.general_utils.filter_definitions import ion_p_num, default_units_dict, default_limits_dict, default_cloud_dict
 from CGM.general_utils.center_finder import find_center
 from CGM.absorber_extraction_class.absorber_extractor import absorber_extractor
+
+path.insert(0,"/mnt/home/boydbre1/Repo/foggie")
+from foggie.utils.foggie_load import foggie_load
 
 class absorber_plotter(absorber_extractor):
     """
@@ -105,6 +107,7 @@ class absorber_plotter(absorber_extractor):
                 ray_filename,
                 ion_name='H I',
                 cut_region_filters=None,
+                use_foggie_load=True,
                 slice_field=None,
                 absorber_fields=[],
                 north_vector=[0, 0, 1],
@@ -148,7 +151,13 @@ class absorber_plotter(absorber_extractor):
         self.center_gal= center_gal
 
         #open up the dataset and ray files
-        self.ds = yt.load(self.ds_filename)
+        if use_foggie_load:
+            box_trackfile = '/mnt/home/boydbre1/data/track_files/halo_track_200kpc_nref10' #might want to make more flexible
+            hcv_file='/mnt/home/boydbre1/Repo/foggie/foggie/halo_infos/008508/nref11c_nref9f/halo_c_v'
+            self.ds, reg_foggie = foggie_load(self.ds_filename, box_trackfile,
+                                              halo_c_v_name=hcv_file, disk_relative=True)
+        else:
+            self.ds = yt.load(self.ds_filename)
         self.load_ray(self.ray_filename)
 
 
