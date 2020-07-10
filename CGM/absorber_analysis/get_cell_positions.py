@@ -5,14 +5,14 @@ import sys
 
 from CGM.general_utils.filter_definitions import parse_cut_filter
 
-# assume we have table, will handle loading above
+def main(df_file,raydir, cut_str, outdir):
 
-def main(table_file,raydir, cut_str, outdir):
+    # load dataframe
+    df = pd.read_csv(df_file, index_col=0)
 
-    table = Table.read(table_file)
-
+    #extract all the x/y/z postions for each cell in an absorber
     positions =[]
-    for index, s, e in table[['absorber_index', 'interval_start', 'interval_end']]:
+    for index, s, e in df[['absorber_index', 'interval_start', 'interval_end']]:
         ray_num=index[:-1]
 
         ray = yt.load(f"{raydir}/ray{ray_num}.h5")
@@ -31,6 +31,7 @@ def main(table_file,raydir, cut_str, outdir):
 
         ray.close()
 
+    #output as a numpy array
     all_positions = np.vstack(positions)
 
     return all_positions
@@ -40,8 +41,8 @@ if __name__ == '__main__':
     ds=sys.argv[1]
 
     data_dir="/mnt/home/boydbre1/data/absorber_data/cool_refinement/max_impact200/ion_O_VI/"
-    table_file = f"{data_dir}/cgm/{ds}_absorbers.h5"
+    df_file = f"{data_dir}/cgm/{ds}_absorbers.csv"
     raydir=f"/mnt/gs18/scratch/users/boydbre1/analysis/cool_refinement/{ds}/max_impact200/rays/"
 
-    pos = main(table_file, raydir, "cgm", data_dir)
+    pos = main(df_file, raydir, "cgm", data_dir)
     np.save(f"{data_dir}/cgm/{ds}_positions.npy", pos)
