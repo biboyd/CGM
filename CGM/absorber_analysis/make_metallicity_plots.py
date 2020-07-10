@@ -6,8 +6,9 @@ import matplotlib.pyplot as plt
 import yt
 import trident
 import sys
-from pandas import pd
+import pandas as pd
 
+homeDir="/mnt/home/boydbre1"
 def main(ds_fname, array_name, impact_param='??', out_dir='./'):
     df = pd.read_csv(array_name, index_col=0)
     ds = yt.load(ds_fname)
@@ -54,6 +55,8 @@ def main(ds_fname, array_name, impact_param='??', out_dir='./'):
                 dla_logNH.append(absorber['col_dens'])
 
 
+    print(len(slfs_logNH)+len(plls_logNH)+ len(lls_logNH)+ len(slls_logNH)+len(dla_logNH))
+    print(len(df.index))
     #plot all the pretty colors
     ax_scat = fig.add_subplot(122)
     ax_scat.scatter(slfs_logNH, slfs_metal, color='tab:grey', edgecolor='black', label='SLFSs')
@@ -105,8 +108,8 @@ if __name__ == '__main__':
         out_dir='./'
     frac=0.8
 
-    ds_fname = f"/mnt/gs18/scratch/users/boydbre1/cosmological/foggie/{ds_name}/{ds_name}"
-    arr_dir=f"{homeDir}/data/absorber_data/cool_refinement/max_impact{max_b}/ion_H_I"
+    ds_fname = f"/mnt/gs18/scratch/users/boydbre1/cosmological/cool_refinement/{ds_name}/{ds_name}"
+    arr_dir=f"{homeDir}/data/absorber_data/cool_refinement/max_impact{max_b}/ion_H_I/cgm"
     arr_name = f"{arr_dir}/{ds_name}_absorbers.csv"
 
     main(ds_fname, arr_name, impact_param=max_b, out_dir=out_dir)
